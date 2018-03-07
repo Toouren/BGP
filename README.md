@@ -67,7 +67,7 @@ Hа практике познакомиться с некоторыми возм
         Router(config-router)#redistribute ospf 1
     ```
     
-Теперь AS 300, 418, 218 знают о сетях в AS 100 и могут построить до них маршрут. Убедимся в этом при помощи ``show ip bgp`` и ``show ip route``
+    Теперь AS 300, 418, 218 знают о сетях в AS 100 и могут построить до них маршрут. Убедимся в этом при помощи ``show ip bgp`` и ``show ip route``
 AS3:
 ![N|Solid](https://i.imgur.com/TJS7j2i.png)
 ![N|Solid](https://i.imgur.com/I375qd4.png)
@@ -78,6 +78,17 @@ AS4:
 ![N|Solid](https://i.imgur.com/iLzKgM9.png)
 ![N|Solid](https://i.imgur.com/n3Yh4Ue.png)
 
+9. Выделяем сеть 214.1.1.0/24 (SERVER-1 -- AS1) в отдельную OSPF область.
+    ```
+    AS1:
+        Router(config)#router ospf 1
+        Router(config-router)#no network 214.1.1.0 0.0.0.255 area 100
+        Router(config-router)#network 214.1.1.0 0.0.0.255 area 1
+    ```
+    При выделении сети в отдельную область, всё равно происходит её трансляция в BGP. На сколько я понимаю, связано это с тем, что транслировали мы весь OSPF процесс в BGP, а не отдельную область. Убедиться в этом можно при помощи просмотра таблиц маршрутизации, например, на роутере AS2.
+    ![N|Solid](https://i.imgur.com/9aT8avC.png)
+    ![N|Solid](https://i.imgur.com/1S4u7Il.png)
+    
 ### Результат
 Научился настраивать протокол BGP в простейших случаях:
 1) анонсировать маршруты внешним соседям eBGP;
